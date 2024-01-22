@@ -6,8 +6,20 @@ import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
 
 ReactFC.fcRoot(FusionCharts, Charts, FusionTheme);
 
-const BarChart = () => {
-  const [chartType, setChartType] = useState("column2d");
+const data = [
+  { label: "Venezuela", value: 290 },
+  { label: "Saudi", value: 260 },
+  { label: "Canada", value: 180 },
+  { label: "Iran", value: 140 },
+  { label: "Russia", value: 115 },
+  { label: "UAE", value: 100 },
+  { label: "US", value: 30 },
+  { label: "China", value: 30 },
+  { label: "India", value: -40 },
+];
+
+const CombinedChart = () => {
+  const [chartType, setChartType] = useState("mscombidy2d");
 
   const chartData = {
     chart: {
@@ -18,24 +30,44 @@ const BarChart = () => {
       numberSuffix: "K",
       theme: "fusion",
     },
-    data: [
-      { label: "Venezuela", value: 290 },
-      { label: "Saudi", value: 260 },
-      { label: "Canada", value: 180 },
-      { label: "Iran", value: 140 },
-      { label: "Russia", value: 115 },
-      { label: "UAE", value: 100 },
-      { label: "US", value: 30 },
-      { label: "China", value: 30 },
-      { label: "India", value: -40 },
+    categories: [
+      {
+        category: data.map((item) => ({ label: item.label })),
+      },
+    ],
+    dataset: [
+      {
+        seriesname: "Reserves",
+        data: data.map((item) => ({
+          value: item.value,
+          color: item.value < 0 ? "#FF0000" : "#4d76a3",
+        })),
+      },
+      {
+        seriesname: "Line",
+        renderas: "line",
+        anchorRadius: "0",
+        data: data.map((item) => ({ value: item.value })),
+      },
+
+      {
+        seriesname: "Decarbonization Trend",
+        renderas: "line",
+        anchorRadius: "0",
+        data: [
+          { value: 290 },
+          { value: 200 },
+          { value: 150 },
+          { value: 120 },
+          { value: 100 },
+          { value: 80 },
+          { value: 20 },
+          { value: 10 },
+          { value: -50 },
+        ],
+      },
     ],
   };
-
-  // Customize individual data points based on the value being negative
-  chartData.data = chartData.data.map((dataPoint) => ({
-    ...dataPoint,
-    color: dataPoint.value < 0 ? "#FF0000" : undefined,
-  }));
 
   const chartConfig = {
     type: chartType,
@@ -51,20 +83,11 @@ const BarChart = () => {
         <label>
           <input
             type="radio"
-            value="column2d"
-            checked={chartType === "column2d"}
-            onChange={() => setChartType("column2d")}
+            value="mscombidy2d"
+            checked={chartType === "mscombidy2d"}
+            onChange={() => setChartType("mscombidy2d")}
           />
-          Bar Graph
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="line"
-            checked={chartType === "line"}
-            onChange={() => setChartType("line")}
-          />
-          Line Graph
+          Bar Graph with Lines
         </label>
       </div>
       <ReactFC {...chartConfig} />
@@ -72,4 +95,4 @@ const BarChart = () => {
   );
 };
 
-export default BarChart;
+export default CombinedChart;
